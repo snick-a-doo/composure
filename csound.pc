@@ -1,0 +1,8 @@
+prefix=/usr
+includedir=${prefix}/include
+
+Name: csound
+Description: Csound
+Version: 6.13
+Cflags: -DUSE_DOUBLE -I${includedir}/csound
+Libs: -lcsound64 -lcsnd6
