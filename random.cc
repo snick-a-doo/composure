@@ -32,6 +32,8 @@ int pick(int low, int high, int low_weight, int high_weight)
 /// weights.
 int pick(const std::vector<int>& weights)
 {
+    if (weights.size() < 2)
+        return 0;
     int weight_sum = std::accumulate(weights.begin(), weights.end(), 0);
     std::uniform_int_distribution<> distrib(0, weight_sum - 1);
     auto r = distrib(random_generator);
@@ -43,4 +45,13 @@ int pick(const std::vector<int>& weights)
     }
     assert(false);
     return 0;
+}
+
+int pick(const std::vector<double>& pool,
+         std::function<double(const std::vector<double>&, std::size_t)> weight)
+{
+    std::vector<int> weights(pool.size());
+    for (std::size_t i = 0; i < pool.size(); ++i)
+        weights[i] = weight(pool, i);
+    return pick(weights);
 }

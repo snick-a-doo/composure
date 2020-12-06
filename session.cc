@@ -1,8 +1,8 @@
 #include "session.hh"
 
-Session::Session(const std::string& csd_file)
+Session::Session(const std::string& csd_text)
 {
-    load(csd_file);
+    load(csd_text);
 }
 
 Session::~Session()
@@ -13,9 +13,9 @@ Session::~Session()
     mp_perf_thread->Join();
 }
 
-void Session::load(const std::string& csd_file)
+void Session::load(const std::string& csd_text)
 {
-    m_csd_file = csd_file;
+    m_csd_text = csd_text;
     init();
     start();
 }
@@ -29,8 +29,9 @@ void Session::init()
 
 void Session::start()
 {
-    if (m_csound.Compile(m_csd_file.c_str()) != 0)
+    if (m_csound.CompileCsdText(m_csd_text.c_str()) != 0)
         return;
+    m_csound.Start();
     mp_perf_thread = std::make_unique<CsoundPerformanceThread>(&m_csound);
     mp_perf_thread->Play();
 }

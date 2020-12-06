@@ -8,8 +8,8 @@
 class Session
 {
 public:
-    /// Load a Csound file.
-    Session(const std::string& csd_file);
+    /// Load a Csound definition.
+    Session(const std::string& csd_text);
     ~Session();
 
     /// Start playing from the beginning.
@@ -30,7 +30,7 @@ private:
     void start();
 
     Csound m_csound;
-    std::string m_csd_file;
+    std::string m_csd_text;
     std::unique_ptr<CsoundPerformanceThread> mp_perf_thread;
     /// A variable parameter in the csd file.
     MYFLT* mp_factor = nullptr;
