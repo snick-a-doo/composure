@@ -7,7 +7,7 @@
 
 std::string csd_text = "<CsoundSynthesizer>\n"
     "<CsOptions>\n"
-    "--midioutfile=out.midi --nosound\n"
+    "--midioutfile=compose.midi --nosound\n"
     "</CsOptions>\n"
     "<CsInstruments>\n"
     "instr 1\n"
@@ -25,7 +25,7 @@ std::string csd_text = "<CsoundSynthesizer>\n"
 int main(int argc, char** argv)
 {
     int voices = 6;
-    int cycles = 4;
+    int cycles = 8;
     int range = 24;
     int tempo = 60;
     if (argc > 1)

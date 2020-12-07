@@ -154,7 +154,7 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
         // the pitch range is large.
         double dur = subdivide(4.0, pick(0, 2, 18 - span, span));
         // Put successive arpeggio voices in the past.
-        out.set_notes(dur, 0.1, pitch, -(dur*(voices+1))/voices);
+        out.set_notes(dur, 0.1, pitch, -dur*(voices+1)/voices);
 
         // Update the ages of notes that weren't changed.
         for (int i = 0; i < voices; ++i)
@@ -228,6 +228,7 @@ std::vector<Phrase> filter(const Phrase& phrase)
     std::vector<Phrase> parts;
     for (std::size_t ip = 0; ip < poi.size(); ++ip)
     {
+        std::cout << "  " << ip << ' ' << poi[ip] << std::endl;
         std::vector<Note> part;
         for (std::size_t jp = 0; jp < bin; ++jp)
             part.push_back(sorted_notes[poi[ip] + jp]);
