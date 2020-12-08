@@ -1,3 +1,18 @@
+// Copyright © 2020 Sam Varner
+//
+// This file is part of Composure.
+//
+// Composure is free software: you can redistribute it and/or modify it under the terms of
+// the GNU General Public License as published by the Free Software Foundation, either
+// version 3 of the License, or (at your option) any later version.
+//
+// Composure is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+// PURPOSE.  See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with Composure.
+// If not, see <http://www.gnu.org/licenses/>.
+
 #include "composer.hh"
 #include "random.hh"
 
@@ -18,7 +33,7 @@ namespace
 {
     constexpr int n_degrees = 7;
     /// Half steps from tonic for a major scale.
-    std::array<double, n_degrees> major = {0, 2, 4, 5, 7, 9, 11};
+    constexpr std::array<double, n_degrees> major = {0, 2, 4, 5, 7, 9, 11};
 
     /// @return The difference between the largest and smallest elements of v.
     double range(const Vd& v)
@@ -134,7 +149,7 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
     // The number of repetitions is used as a weight for choosing which note to move.  The
     // last element means "none of the above".  It's the most likely until we accumulate
     // some repetitions.
-    Vi repetitions(voices + 1, 0);
+    Vd repetitions(voices + 1, 0.0);
     repetitions.back() = voices;
 
     Phrase out = phrase;
@@ -142,7 +157,10 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
     for (double span = 0.0; span < max_range && out.size() < 1000; span = range(pitch))
     {
         // Move the "most discordant" note by -2, -1, 0, 1, or 2 scale degrees.
-        auto move_idx = pick(pitch, weight_discord);
+        std::vector<double> discord(pitch.size());
+        std::transform(pitch.begin(), pitch.end(), discord.begin(),
+                       [&pitch](auto x) { return weight_discord(pitch, x); });
+        auto move_idx = pick(discord);
         pitch[move_idx] = scale(tonic, pitch[move_idx], pick(-2, 2));
 
         // Possibly move a random note weighted by age.
@@ -152,7 +170,7 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
 
         // Pick a random duration for the note: 1/4, 1/8, 1/16.  Favor shorter notes when
         // the pitch range is large.
-        double dur = subdivide(4.0, pick(0, 2, 18 - span, span));
+        double dur = subdivide(4.0, pick(0, 2, max_range - span, span));
         // Put successive arpeggio voices in the past.
         out.set_notes(dur, 0.1, pitch, -dur*(voices+1)/voices);
 
@@ -163,30 +181,16 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
         if (old_idx != voices)
             repetitions[old_idx] = 0;
     }
-
-    std::ofstream os("1.compose");
-    os << "time\tpitch\n";
-    int n_notes = 0;
-    for (const auto& n : out.notes())
-    {
-        os << n.time << '\t' << n.pitch << std::endl;
-        if (n.time >= 0)
-            ++n_notes;
-    }
-    std::cout << "compose: " << phrase.size() << " -> " << n_notes << " notes\n";
     return out;
 }
 
-std::vector<Phrase> filter(const Phrase& phrase)
+Phrase edit(const Phrase& phrase)
 {
-    std::cout << "filter: " << phrase.size() << " notes\n";
     auto points_of_interest = [](Vd& in) {
-        std::cout << "POI: " << in.size() << " notes\n";
         std::vector<std::size_t> ps;
         auto [min, max] = std::minmax_element(in.begin(), in.end() - in.size()/2);
         if (min == in.end() || max == in.end())
             return ps;
-        std::cout << "  min/max: " << *min << ' ' << *max << std::endl;
         auto thresh = (*min + *max)/2.0;
         bool found = false;
         for (std::size_t i = 1; i < in.size(); ++i)
@@ -224,35 +228,15 @@ std::vector<Phrase> filter(const Phrase& phrase)
     }
 
     std::vector<std::size_t> poi = points_of_interest(cons);
-    std::cout << "filter: " << poi.size() << " POIs\n";
-    std::vector<Phrase> parts;
+    Phrase edited;
     for (std::size_t ip = 0; ip < poi.size(); ++ip)
     {
-        std::cout << "  " << ip << ' ' << poi[ip] << std::endl;
         std::vector<Note> part;
         for (std::size_t jp = 0; jp < bin; ++jp)
             part.push_back(sorted_notes[poi[ip] + jp]);
-
-        parts.emplace_back(part, sorted_notes[poi[ip] + bin].time);
-    }
-
-    std::ofstream os("2.filter");
-    os << "time\tpitch\tcons\n";
-    for (std::size_t i = 0; i < time.size(); ++i)
-        os << time[i] << '\t' << pitch[i] << '\t' << cons[i] << std::endl;
-
-    return parts;
-}
-
-Phrase edit(const Phrase& phrase)
-{
-    std::vector<Phrase> parts = filter(phrase);
-    Phrase edited;
-    for (auto p : parts)
-    {
+        Phrase p = Phrase(part, sorted_notes[poi[ip] + bin].time);
         p.time_shift(edited.end_time() - p.notes().front().time);
         edited.append(p);
     }
-    std::cout << "edit: " << phrase.size() << " -> " << edited.size() << " notes\n";
     return edited;
 }

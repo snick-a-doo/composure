@@ -14,11 +14,11 @@ session_sources = ['session.cc']
 session_lib = library('session', session_sources,
                       dependencies: [csound_dep])
 
-compose_sources = ['main.cc']
-compose_app = executable('compose', compose_sources,
-                         dependencies: [csound_dep],
-                         link_with: [composer_lib, session_lib])
+composure_sources = ['main.cc']
+composure_app = executable('composure', composure_sources,
+                           dependencies: [csound_dep],
+                           link_with: [composer_lib, session_lib])
 
-test_sources = ['test.cc', 'test_phrase.cc']
+test_sources = ['test.cc', 'test-phrase.cc', 'test-random.cc']
 test_app = executable('test_app', test_sources, link_with: composer_lib)
-test('composer test', test_app)
+test('composure test', test_app)
