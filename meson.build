@@ -1,11 +1,11 @@
-project('player', 'cpp',
+project('composure', 'cpp',
         version: '0.1.0',
         default_options: ['cpp_std=c++2a'],
         license: 'GPL3')
 
-add_global_arguments('-Dwarning_level=3', language: 'cpp')
+add_global_arguments('-Dwarning_level=3', '-std=c++2a', language: 'cpp')
 
-composer_sources = ['composer.cc', 'phrase.cc', 'random.cc']
+composer_sources = ['composer.cc', 'midi.cc', 'phrase.cc', 'random.cc']
 composer_lib = library('composer', composer_sources)
 
 csound_dep = dependency('csound')
@@ -19,6 +19,6 @@ composure_app = executable('composure', composure_sources,
                            dependencies: [csound_dep],
                            link_with: [composer_lib, session_lib])
 
-test_sources = ['test.cc', 'test-phrase.cc', 'test-random.cc']
+test_sources = ['test.cc', 'test-midi.cc', 'test-phrase.cc', 'test-random.cc']
 test_app = executable('test_app', test_sources, link_with: composer_lib)
 test('composure test', test_app)

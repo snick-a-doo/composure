@@ -35,8 +35,8 @@ struct Phrase
     using VNote = std::vector<Note>;
 
 public:
-    Phrase() = default;
-    Phrase(const VNote& notes, double end_time);
+    Phrase(double tempo);
+    Phrase(double tempo, const VNote& notes, double end_time);
 
     /// Add notes to the phrase
     /// @param dt The time between the start of each note.  May be negative.
@@ -56,8 +56,12 @@ public:
     const VNote& notes() const;
     /// @return The time at the end of the phrase.
     double end_time() const;
+    double tempo() const;
+
+    void write_midi(const std::string& file);
 
 private:
+    double m_tempo; // beat/min
     VNote m_notes;
     double m_end_time = 0.0;
 };

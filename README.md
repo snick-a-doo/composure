@@ -1,5 +1,5 @@
 # Composure
-A niave music compoliton algorithm.
+A naive music composition algorithm
 
 # Usage
     compose voices cycles range seed
@@ -21,6 +21,13 @@ The "edit" part of the cycle takes chunks of the notes generated so far and stic
 When the compose/edit sequence is iterated, "compose" takes the last note for each voice from the output of "edit" as its starting point and appends new material.  Then "edit" splices together the interesting bits from the whole piece so far.
 
 There's very little music theory or traditional rules of composition baked in.  Sometimes the output is tedious, but often it makes me happy.  And if one composition doesn't hit the spot, you can always generate another.
+
+# Example
+The file composed.midi was produced 
+
+    compose 8 15 24
+
+It takes a minute to get rolling, and maybe it go on for too long between major changes, but really enjoyed that one.  It sounds great on marimba.
 
 # Building
 Meson looks for a pkg-config file for Csound.  There's one in the project root in case

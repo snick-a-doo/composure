@@ -28,7 +28,7 @@ std::string csd_text = "<CsoundSynthesizer>\n"
     "<CsInstruments>\n"
     "instr 1\n"
     "  inote = p5\n"
-    "  ivel = 96\n"
+    "  ivel = 101\n"
     "  midion 1, inote, ivel\n"
     "endin\n"
     "</CsInstruments>\n"
@@ -43,6 +43,7 @@ int main(int argc, char** argv)
     int voices = 6;
     int cycles = 8;
     int range = 24;
+    int tempo = 60;
     int seed = -1;
     if (argc > 1)
         voices = std::stoi(argv[1]);
@@ -51,21 +52,24 @@ int main(int argc, char** argv)
     if (argc > 3)
         range = std::stoi(argv[3]);
     if (argc > 4)
-        seed = std::stoi(argv[4]);
+        tempo = std::stoi(argv[4]);
     if (argc > 5)
-    {
-        std::cerr << "Usage [voices cycles range seed]" << argv[0] << std::endl;
-        exit(1);
-    }
+        seed = std::stoi(argv[5]);
+    if (argc > 6)
+        std::cerr << "Usage [voices cycles range tempo seed]" << argv[0] << std::endl;
 
     if (seed != -1)
         set_random_seed(seed);
     // Pick a random key from MIDI note 54 to 65: F# below middle C to F above.
     int tonic = pick(54, 65);
     // Start with an empty phrase and iterate.
-    Phrase phrase;
+    Phrase phrase(tempo);
+    // phrase.set_notes(3, 1, {60, 59, 60}, 1);
+    // phrase.set_notes(1.5, 1, {64, 63, 64}, 0.5);
     for (int i = 0; i < cycles; ++i)
         phrase = edit(compose(phrase, tonic, voices, range));
+
+    phrase.write_midi("midi.midi");
 
     // Start a Csound and write the MIDI file.
     Session s(csd_text);

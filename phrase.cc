@@ -13,15 +13,31 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
+#include "midi.hh"
 #include "phrase.hh"
 
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <set>
 #include <sstream>
 
 using Vd = std::vector<double>;
 using VNote = std::vector<Note>;
 
-Phrase::Phrase(const VNote& notes, double end_time)
-    : m_notes(notes),
+bool operator< (const Note& n1, const Note& n2)
+{
+    return n1.time < n2.time;
+}
+
+Phrase::Phrase(double tempo)
+    : m_tempo(tempo)
+{
+}
+
+Phrase::Phrase(double tempo, const VNote& notes, double end_time)
+    : m_tempo(tempo),
+      m_notes(notes),
       m_end_time(end_time)
 {
 }
@@ -41,10 +57,14 @@ double Phrase::end_time() const
     return m_end_time;
 }
 
+double Phrase::tempo() const
+{
+    return m_tempo;
+}
+
 void Phrase::set_notes(double duration, double volume, const Vd& pitch, double delta_t)
 {
-    const auto voices = pitch.size();
-    for (std::size_t j = 0; j < voices; j++)
+    for (std::size_t j = 0; j < pitch.size(); j++)
         m_notes.push_back({m_end_time + j*delta_t, duration, volume, pitch[j]});
     m_end_time += duration;
 }
@@ -84,4 +104,24 @@ void Phrase::time_shift(double dt)
     for (auto& n : m_notes)
         n.time += dt;
     m_end_time += dt;
+}
+
+void Phrase::write_midi(const std::string& file_name)
+{
+    Midi_File midi(m_tempo, 96);
+
+    std::multiset<Note> waiting(m_notes.begin(), m_notes.end());
+    while (!waiting.empty())
+    {
+        const auto& note = waiting.extract(waiting.begin()).value();
+        bool on = note.duration != 0.0;
+        midi.add_note(note.time, on, note.pitch, note.volume);
+        // Insert a note-off event.
+        if (on)
+            waiting.emplace(note.time + note.duration, 0.0, note.volume, note.pitch);
+    }
+    std::cout << midi.size() << " notes, " << midi.duration() << " s" << std::endl;
+
+    std::ofstream file(file_name);
+    midi.write(file);
 }
