@@ -1,37 +1,37 @@
 #include "compose.hh"
 #include "doctest.h"
 
-TEST_CASE("empty")
+bool operator== (const Note& n1, const Note& n2)
 {
-    Phrase phrase(60);
-    CHECK(phrase.score(100) == "t 0 100\n");
-    CHECK(phrase.score() == "");
+    return n1.time == n2.time
+        && n1.duration == n2.duration
+        && n1.volume == n2.volume
+        && n1.pitch == n2.pitch;
 }
 
-TEST_CASE("table")
-{
-    std::vector<double> i_table = {10, 7, 5, 3};
-    std::vector<double> d_table = {1.0, 0.7, 0.5, 0.3};
-
-    Phrase phrase(60);
-    phrase.set_notes(1, 0.5, {69}, 0.0);
-    CHECK(phrase.score(i_table, 50) == "f1 0 4096 10 10 7 5 3\nt 0 50\ni1 0 1 0.5 69\n");
-    CHECK(phrase.score(d_table, 50) == "f1 0 4096 10 1 0.7 0.5 0.3\nt 0 50\ni1 0 1 0.5 69\n");
-}
-
-TEST_CASE("chord")
+TEST_CASE("notes")
 {
     Phrase phrase(60);
-    phrase.set_notes(0.1, 0.5, {60, 64, 67}, 0.0);
-    CHECK(phrase.end_time() == 0.1);
-    std::string out = "i1 0 0.1 0.5 60\ni1 0 0.1 0.5 64\ni1 0 0.1 0.5 67\n";
-    CHECK(phrase.score() == out);
-
-    phrase.set_notes(0.1, 0.5, {60, 64, 67}, 0.2);
-    out += "i1 0.1 0.1 0.5 60\ni1 0.3 0.1 0.5 64\ni1 0.5 0.1 0.5 67\n";
-    CHECK(phrase.score() == out);
-
-    phrase.set_notes(0.1, 0.5, {60, 64, 67}, -0.5);
-    out += "i1 0.2 0.1 0.5 60\ni1 -0.3 0.1 0.5 64\ni1 -0.8 0.1 0.5 67\n";
-    CHECK(phrase.score() == out);
+    SUBCASE("empty")
+    {
+        CHECK(phrase.notes().empty());
+    }
+    SUBCASE("add")
+    {
+        phrase.set_notes(1, 0.5, {69, 70, 71}, 0.5);
+        const auto& n = phrase.notes();
+        CHECK(n.size() == 3);
+        CHECK(n[0] == Note(0.0, 1.0, 0.5, 69));
+        CHECK(n[1] == Note(0.5, 1.0, 0.5, 70));
+        CHECK(n[2] == Note(1.0, 1.0, 0.5, 71));
+    }
+    SUBCASE("negative")
+    {
+        phrase.set_notes(1, 0.5, {69, 70, 71}, -0.5);
+        const auto& n = phrase.notes();
+        CHECK(n.size() == 3);
+        CHECK(n[0] == Note(0.0, 1.0, 0.5, 69));
+        CHECK(n[1] == Note(-0.5, 1.0, 0.5, 70));
+        CHECK(n[2] == Note(-1.0, 1.0, 0.5, 71));
+    }
 }

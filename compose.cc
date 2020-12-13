@@ -31,9 +31,9 @@ using Vi = std::vector<int>;
 
 namespace
 {
-    constexpr int n_degrees = 7;
     /// Half steps from tonic for a major scale.
-    constexpr std::array<double, n_degrees> major = {0, 2, 4, 5, 7, 9, 11};
+    const std::vector<double> major_scale = {0, 2, 4, 5, 7, 9, 11};
+    const std::vector<double> chromatic_scale = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 
     /// @return The difference between the largest and smallest elements of v.
     double range(const Vd& v)
@@ -46,37 +46,37 @@ namespace
     /// @param pitch A MIDI note number of a note.
     /// @return The degree of the scale (0-6) of pitch in key, or no value if pitch is not in
     /// the key.
-    std::optional<int> degree(double key, double pitch)
+    std::optional<int> degree(const auto& scale, double key, double pitch)
     {
         while (pitch < key)
             pitch += 12;
         auto halfs = std::fmod(pitch - key, 12.0);
         assert(0 <= halfs && halfs < 12);
-        auto it = std::find(major.begin(), major.end(), halfs);
-        if (it == major.end())
+        auto it = std::find(scale.begin(), scale.end(), halfs);
+        if (it == scale.end())
             return std::nullopt;
-        return static_cast<int>(std::distance(major.begin(), it));
+        return static_cast<int>(std::distance(scale.begin(), it));
     }
 
     /// @return The pitch delta degrees up or down the scale from a given pitch.
-    double scale(double key, double pitch, double delta)
+    double scale_pitch(const auto& scale, double key, double pitch, double delta)
     {
         int octave = std::trunc((pitch - key)/12);
-        auto deg = degree(key, pitch);
+        auto deg = degree(scale, key, pitch);
         assert(deg);
         *deg += delta;
-        while (*deg >= n_degrees)
+        while (*deg >= static_cast<int>(scale.size()))
         {
             ++octave;
-            *deg -= n_degrees;
+            *deg -= scale.size();
         }
         while (*deg < 0)
         {
             --octave;
-            *deg += n_degrees;
+            *deg += scale.size();
         }
-        assert(0 <= *deg && *deg < static_cast<int>(major.size()));
-        double out = key + 12*octave + major[*deg];
+        assert(0 <= *deg && *deg < static_cast<int>(scale.size()));
+        double out = key + 12*octave + scale[*deg];
         assert(out >= pitch || delta< 0);
         return out;
     }
@@ -137,7 +137,7 @@ namespace
     }
 }
 
-Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
+Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range, bool chromatic)
 {
     // Initialize pitch with the last notes in the phrase.  Note that the last notes
     // aren't necessarily latest in time.
@@ -161,12 +161,14 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
         std::transform(pitch.begin(), pitch.end(), discord.begin(),
                        [&pitch](auto x) { return weight_discord(pitch, x); });
         auto move_idx = pick(discord);
-        pitch[move_idx] = scale(tonic, pitch[move_idx], pick(-2, 2));
+        pitch[move_idx] = scale_pitch(chromatic ? chromatic_scale : major_scale,
+                                      tonic, pitch[move_idx], pick(-2, 2));
 
         // Possibly move a random note weighted by age.
         auto old_idx = pick(repetitions);
         if (old_idx != voices)
-            pitch[old_idx] = scale(tonic, pitch[old_idx], 2*pick(0, 1) - 1);
+            pitch[old_idx] = scale_pitch(chromatic ? chromatic_scale : major_scale,
+                                         tonic, pitch[old_idx], 2*pick(0, 1) - 1);
 
         // Pick a random duration for the note: 1/4, 1/8, 1/16.  Favor shorter notes when
         // the pitch range is large.

@@ -17,40 +17,100 @@
 #include "random.hh"
 
 #include <cassert>
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <getopt.h>
 
 /// Make a new composition and write it to out.midi.
 int main(int argc, char** argv)
 {
+    std::string output = "composure.midi";
     int voices = 6;
-    int cycles = 8;
+    int passes = 8;
     int range = 24;
     int tempo = 60;
+    int key = -1;
     int seed = -1;
-    if (argc > 1)
-        voices = std::stoi(argv[1]);
-    if (argc > 2)
-        cycles = std::stoi(argv[2]);
-    if (argc > 3)
-        range = std::stoi(argv[3]);
-    if (argc > 4)
-        tempo = std::stoi(argv[4]);
-    if (argc > 5)
-        seed = std::stoi(argv[5]);
-    if (argc > 6)
-        std::cerr << "Usage [voices cycles range tempo seed]" << argv[0] << std::endl;
+    bool monophonic = false;
+    bool chromatic = false;
+
+    while (true)
+    {
+        static struct option options[] = {
+            {"output", required_argument, nullptr, 'o'},
+            {"voices", required_argument, nullptr, 'v'},
+            {"passes", required_argument, nullptr, 'p'},
+            {"range", required_argument, nullptr, 'r'},
+            {"tempo", required_argument, nullptr, 't'},
+            {"key", required_argument, nullptr, 'k'},
+            {"seed", required_argument, nullptr, 's'},
+            {"monophonic", no_argument, nullptr, 'm'},
+            {"chromatic", no_argument, nullptr, 'c'},
+            {0, 0, 0, 0}};
+        int index;
+        int c = getopt_long(argc, argv, "o:v:p:r:t:k:s:mc", options, &index);
+
+        if (c == -1)
+            break;
+        switch (c)
+        {
+        case 0:
+            break;
+        case 'o':
+            output = optarg;
+            break;
+        case 'v':
+            voices = std::atoi(optarg);
+            break;
+        case 'p':
+            passes = std::atoi(optarg);
+            break;
+        case 'r':
+            range = std::atoi(optarg);
+            break;
+        case 't':
+            tempo = std::atoi(optarg);
+            break;
+        case 'k':
+            key = std::atoi(optarg);
+            break;
+        case 's':
+            seed = std::atoi(optarg);
+            break;
+        case 'm':
+            monophonic = true;
+            break;
+        case 'c':
+            chromatic = true;
+            break;
+        default:
+            std::cerr << "Usage: composure "
+                      << "[[-o|--output=] Output file name "
+                      << "[[-v|--voices=] Number of voices "
+                      << "[[-p|--passes=] Number of compose/edit passes "
+                      << "[[-r|--range=] Maximum range of notes "
+                      << "[[-t|--tempo=] Beats per minute "
+                      << "[[-k|--key=] 60 for middle C"
+                      << "[[-s|--seed=] Random seed "
+                      << "[[-m|--monophonic] "
+                      << "[[-c|--chromatic] "
+                      << std::endl;
+        }
+    }
 
     if (seed != -1)
         set_random_seed(seed);
     // Pick a random key from MIDI note 54 to 65: F# below middle C to F above.
-    int tonic = pick(54, 65);
+    if (key == -1)
+        key = pick(54, 65);
     // Start with an empty phrase and iterate.
     Phrase phrase(tempo);
-    for (int i = 0; i < cycles; ++i)
-        phrase = edit(compose(phrase, tonic, voices, range));
+    for (int i = 0; i < passes; ++i)
+        phrase = edit(compose(phrase, key, voices, range, chromatic));
 
-    phrase.write_midi("midi.midi");
+    std::ofstream file(output);
+    phrase.write_midi(file, monophonic);
 
     return 0;
 }

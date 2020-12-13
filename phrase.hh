@@ -16,7 +16,7 @@
 #ifndef COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED
 #define COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED
 
-#include <string>
+#include <iosfwd>
 #include <vector>
 
 /// A single musical note.
@@ -46,12 +46,6 @@ public:
     /// Append a phrase to the end of this one.
     void append(const Phrase& phrase);
 
-    /// @return A Csound score string.
-    std::string score(double tempo = 0.0) const;
-    /// Include a sine table in the Csound score.  Useful if required by the Csound
-    /// orchestra file.
-    std::string score(const Vd& partials, double tempo = 0.0) const;
-
     /// @return The number of notes in the phrase.
     std::size_t size() const;
     /// Read-only note access.
@@ -61,7 +55,7 @@ public:
     /// @return The tempo in beat/min.
     double tempo() const;
     /// Write the phrase to a file in MIDI format.
-    void write_midi(const std::string& file);
+    std::ostream& write_midi(std::ostream& os, bool monophonic);
 
 private:
     double m_tempo; // beat/min

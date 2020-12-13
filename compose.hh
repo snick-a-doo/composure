@@ -27,7 +27,7 @@
 /// @param max_range Note generation stops when the number of half steps between the
 ///    highest and lowest note in the voices exceeds this value.
 /// @return A Phrase with generated notes.
-Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range);
+Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range, bool chromatic);
 
 /// A fitness function determines points of interest in the Phrase.  Sections that start
 /// at those points are extracted, spliced and returned.  The sections may overlap.

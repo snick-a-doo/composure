@@ -75,30 +75,6 @@ void Phrase::append(const Phrase& phrase)
     m_notes.insert(m_notes.end(), phrase.m_notes.begin(), phrase.m_notes.end());
 }
 
-std::string Phrase::score(const Vd& partials, double tempo) const
-{
-    std::ostringstream out;
-    out << "f1 0 4096 10";
-    for (const auto& p : partials)
-        out << ' ' << p;
-    out << std::endl << score(tempo);
-    return out.str();
-}
-
-std::string Phrase::score(double tempo) const
-{
-    std::ostringstream out;
-    if (tempo > 0.0)
-        out << "t 0 " << tempo << std::endl;
-    for (const auto& note : m_notes)
-        out << "i1 "
-              << note.time << ' '
-              << note.duration << ' '
-              << note.volume << ' '
-              << note.pitch << std::endl;
-    return out.str();
-}
-
 void Phrase::time_shift(double dt)
 {
     for (auto& n : m_notes)
@@ -106,22 +82,37 @@ void Phrase::time_shift(double dt)
     m_end_time += dt;
 }
 
-void Phrase::write_midi(const std::string& file_name)
+std::ostream& Phrase::write_midi(std::ostream& os, bool monophonic)
 {
     Midi_File midi(m_tempo, 96);
 
     std::multiset<Note> waiting(m_notes.begin(), m_notes.end());
+
+    auto note_off_time = [this, waiting, monophonic](const Note& note) {
+        if (monophonic)
+            for (auto& n : waiting)
+                if (n.duration != 0.0 && n.time > note.time)
+                    return n.time;
+        return note.time + note.duration;
+    };
+
+    double last_time = -1.0;
     while (!waiting.empty())
     {
         const auto& note = waiting.extract(waiting.begin()).value();
         bool on = note.duration != 0.0;
+        if (monophonic && on && note.time == last_time)
+            continue;
         midi.add_note(note.time, on, note.pitch, note.volume);
         // Insert a note-off event.
         if (on)
-            waiting.emplace(note.time + note.duration, 0.0, note.volume, note.pitch);
+        {
+            waiting.emplace(note_off_time(note), 0.0, note.volume, note.pitch);
+            last_time = note.time;
+        }
     }
     std::cout << midi.size() << " notes, " << midi.duration() << " s" << std::endl;
 
-    std::ofstream file(file_name);
-    midi.write(file);
+    midi.write(os);
+    return os;
 }
