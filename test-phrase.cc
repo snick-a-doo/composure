@@ -1,4 +1,4 @@
-#include "composer.hh"
+#include "compose.hh"
 #include "doctest.h"
 
 TEST_CASE("empty")

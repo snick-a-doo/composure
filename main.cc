@@ -13,29 +13,12 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
-#include "composer.hh"
+#include "compose.hh"
 #include "random.hh"
-#include "session.hh"
 
 #include <cassert>
 #include <iostream>
 #include <string>
-
-std::string csd_text = "<CsoundSynthesizer>\n"
-    "<CsOptions>\n"
-    "--midioutfile=compose.midi --nosound\n"
-    "</CsOptions>\n"
-    "<CsInstruments>\n"
-    "instr 1\n"
-    "  inote = p5\n"
-    "  ivel = 101\n"
-    "  midion 1, inote, ivel\n"
-    "endin\n"
-    "</CsInstruments>\n"
-    "<CsScore>\n"
-    "</CsScore>\n"
-    "</CsoundSynthesizer>\n";
-
 
 /// Make a new composition and write it to out.midi.
 int main(int argc, char** argv)
@@ -64,17 +47,10 @@ int main(int argc, char** argv)
     int tonic = pick(54, 65);
     // Start with an empty phrase and iterate.
     Phrase phrase(tempo);
-    // phrase.set_notes(3, 1, {60, 59, 60}, 1);
-    // phrase.set_notes(1.5, 1, {64, 63, 64}, 0.5);
     for (int i = 0; i < cycles; ++i)
         phrase = edit(compose(phrase, tonic, voices, range));
 
     phrase.write_midi("midi.midi");
-
-    // Start a Csound and write the MIDI file.
-    Session s(csd_text);
-    s.set_score(phrase.score());
-    sleep(2); // Give it time to finish.
 
     return 0;
 }

@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED
-#define COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED
+#ifndef COMPOSURE_COMPOSURE_COMPOSE_HH_INCLUDED
+#define COMPOSURE_COMPOSURE_COMPOSE_HH_INCLUDED
 
 #include "phrase.hh"
 
@@ -33,4 +33,4 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range);
 /// at those points are extracted, spliced and returned.  The sections may overlap.
 Phrase edit(const Phrase& phrase);
 
-#endif // COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED
+#endif // COMPOSURE_COMPOSURE_COMPOSE_HH_INCLUDED
