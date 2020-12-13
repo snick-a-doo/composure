@@ -172,7 +172,7 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range)
         // the pitch range is large.
         double dur = subdivide(4.0, pick(0, 2, max_range - span, span));
         // Put successive arpeggio voices in the past.
-        out.set_notes(dur, 0.1, pitch, -dur*(voices+1)/voices);
+        out.set_notes(dur, 0.8, pitch, -dur*(voices+1)/voices);
 
         // Update the ages of notes that weren't changed.
         for (int i = 0; i < voices; ++i)
@@ -228,13 +228,13 @@ Phrase edit(const Phrase& phrase)
     }
 
     std::vector<std::size_t> poi = points_of_interest(cons);
-    Phrase edited;
+    Phrase edited(phrase.tempo());
     for (std::size_t ip = 0; ip < poi.size(); ++ip)
     {
         std::vector<Note> part;
         for (std::size_t jp = 0; jp < bin; ++jp)
             part.push_back(sorted_notes[poi[ip] + jp]);
-        Phrase p = Phrase(part, sorted_notes[poi[ip] + bin].time);
+        Phrase p = Phrase(edited.tempo(), part, sorted_notes[poi[ip] + bin].time);
         p.time_shift(edited.end_time() - p.notes().front().time);
         edited.append(p);
     }

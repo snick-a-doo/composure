@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMPOSE_COMPOSE_PHRASE_HH_INCLUDED
-#define COMPOSE_COMPOSE_PHRASE_HH_INCLUDED
+#ifndef COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED
+#define COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED
 
 #include <string>
 #include <vector>
@@ -29,19 +29,21 @@ struct Note
 };
 
 /// A sequence of notes, possibly overlapping in time.
-struct Phrase
+class Phrase
 {
     using Vd = std::vector<double>;
     using VNote = std::vector<Note>;
 
 public:
-    Phrase() = default;
-    Phrase(const VNote& notes, double end_time);
+    Phrase(double tempo);
+    Phrase(double tempo, const VNote& notes, double end_time);
 
     /// Add notes to the phrase
     /// @param dt The time between the start of each note.  May be negative.
     void set_notes(double duration, double volume, const Vd& pitch, double dt);
+    /// Move the phrase forward in time.
     void time_shift(double dt);
+    /// Append a phrase to the end of this one.
     void append(const Phrase& phrase);
 
     /// @return A Csound score string.
@@ -56,10 +58,15 @@ public:
     const VNote& notes() const;
     /// @return The time at the end of the phrase.
     double end_time() const;
+    /// @return The tempo in beat/min.
+    double tempo() const;
+    /// Write the phrase to a file in MIDI format.
+    void write_midi(const std::string& file);
 
 private:
+    double m_tempo; // beat/min
     VNote m_notes;
     double m_end_time = 0.0;
 };
 
-#endif // COMPOSE_COMPOSE_PHRASE_HH_INCLUDED
+#endif // COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED

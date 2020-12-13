@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED
+#define COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED
+
 #include "phrase.hh"
 
 /// Generate notes and add them to a Phrase.
@@ -29,3 +32,5 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range);
 /// A fitness function determines points of interest in the Phrase.  Sections that start
 /// at those points are extracted, spliced and returned.  The sections may overlap.
 Phrase edit(const Phrase& phrase);
+
+#endif // COMPOSURE_COMPOSURE_COMPOSER_HH_INCLUDED

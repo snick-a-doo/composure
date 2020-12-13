@@ -13,9 +13,13 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef COMPOSURE_COMPOSURE_RANDOM_HH_INCLUDED
+#define COMPOSURE_COMPOSURE_RANDOM_HH_INCLUDED
+
 #include <functional>
 #include <vector>
 
+/// Set a seed for reproducible output.
 void set_random_seed(int s);
 
 /// @return A random integer from low to high, inclusive, with linear weighting.
@@ -27,3 +31,5 @@ int pick(const std::vector<double>& weights);
 ///     function.
 int pick(const std::vector<double>& pool,
          std::function<double(const std::vector<double>&, std::size_t)> weight);
+
+#endif // COMPOSURE_COMPOSURE_RANDOM_HH_INCLUDED
