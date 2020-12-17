@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <set>
 #include <sstream>
 
@@ -101,7 +102,10 @@ std::ostream& Phrase::write_midi(std::ostream& os, bool monophonic)
     {
         const auto& note = waiting.extract(waiting.begin()).value();
         bool on = note.duration != 0.0;
-        if (monophonic && on && note.time == last_time)
+        if (on)
+            std::cout << note.time << ' ' << note.time + note.duration << ' '
+                      << note.pitch << std::endl;
+       if (monophonic && on && note.time == last_time)
             continue;
         midi.add_note(note.time, on, note.pitch, note.volume);
         // Insert a note-off event.
@@ -111,7 +115,13 @@ std::ostream& Phrase::write_midi(std::ostream& os, bool monophonic)
             last_time = note.time;
         }
     }
-    std::cout << midi.size() << " notes, " << midi.duration() << " s" << std::endl;
+
+    auto time_str = [](int s) {
+        std::ostringstream os;
+        os << s/60 << ':' << std::setw(2) << std::setfill('0') << s % 60;
+        return os.str();
+    };
+    // std::cout << midi.size() << " notes, " << time_str(midi.duration()*60.0/m_tempo) << std::endl;
 
     midi.write(os);
     return os;

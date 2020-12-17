@@ -162,7 +162,8 @@ Phrase compose(const Phrase& phrase, int tonic, int voices, int max_range, bool 
                        [&pitch](auto x) { return weight_discord(pitch, x); });
         auto move_idx = pick(discord);
         pitch[move_idx] = scale_pitch(chromatic ? chromatic_scale : major_scale,
-                                      tonic, pitch[move_idx], pick(-2, 2));
+                                      tonic, pitch[move_idx],
+                                      chromatic ? pick(-4, 4) : pick(-2, 2));
 
         // Possibly move a random note weighted by age.
         auto old_idx = pick(repetitions);

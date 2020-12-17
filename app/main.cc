@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
-#include "compose.hh"
-#include "random.hh"
+#include <compose.hh>
+#include <random.hh>
 
 #include <cassert>
 #include <fstream>
