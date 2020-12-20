@@ -12,26 +12,26 @@ bool operator== (const Note& n1, const Note& n2)
 TEST_CASE("notes")
 {
     Phrase phrase(60);
+    Note n1(1.2, 2.3, 0.8, 33);
+    Note n2(4.5, 6.7, 0.2, 44);
     SUBCASE("empty")
     {
         CHECK(phrase.notes().empty());
     }
-    SUBCASE("add")
+    SUBCASE("ascending")
     {
-        phrase.set_notes(1, 0.5, {69, 70, 71}, 0.5);
+        phrase.append_notes({n1, n2});
         const auto& n = phrase.notes();
-        CHECK(n.size() == 3);
-        CHECK(n[0] == Note(0.0, 1.0, 0.5, 69));
-        CHECK(n[1] == Note(0.5, 1.0, 0.5, 70));
-        CHECK(n[2] == Note(1.0, 1.0, 0.5, 71));
+        CHECK(n.size() == 2);
+        CHECK(n[0] == n1);
+        CHECK(n[1] == n2);
     }
-    SUBCASE("negative")
+    SUBCASE("descending")
     {
-        phrase.set_notes(1, 0.5, {69, 70, 71}, -0.5);
+        phrase.append_notes({n2, n1});
         const auto& n = phrase.notes();
-        CHECK(n.size() == 3);
-        CHECK(n[0] == Note(0.0, 1.0, 0.5, 69));
-        CHECK(n[1] == Note(-0.5, 1.0, 0.5, 70));
-        CHECK(n[2] == Note(-1.0, 1.0, 0.5, 71));
+        CHECK(n.size() == 2);
+        CHECK(n[0] == n1);
+        CHECK(n[1] == n2);
     }
 }

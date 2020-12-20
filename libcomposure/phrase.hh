@@ -17,6 +17,7 @@
 #define COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED
 
 #include <iosfwd>
+#include <string>
 #include <vector>
 
 /// A single musical note.
@@ -26,6 +27,7 @@ struct Note
     double duration; ///< beats
     double volume; ///< 0 to 1
     double pitch;  ///< MIDI note: 60 + (half steps from middle C).
+    int generation;
 };
 
 /// A sequence of notes, possibly overlapping in time.
@@ -36,31 +38,35 @@ class Phrase
 
 public:
     Phrase(double tempo);
-    Phrase(double tempo, const VNote& notes, double end_time);
 
-    /// Add notes to the phrase
-    /// @param dt The time between the start of each note.  May be negative.
-    void set_notes(double duration, double volume, const Vd& pitch, double dt);
-    /// Move the phrase forward in time.
-    void time_shift(double dt);
-    /// Append a phrase to the end of this one.
-    void append(const Phrase& phrase);
+    /// Generate notes and add them to a Phrase.
+    /// @param phrase A set of notes to add to, using the notes at the end as a starting
+    ///     point.  If phrase is empty, copies of tonic are used as the starting point.
+    /// @param tonic A the MIDI note number for the tonic of the key.  60 is middle C, 61 is a
+    ///     half step higher, etc.  All generated notes are in the key.
+    /// @param voices The number of voices in the generated phrase.
+    /// @param max_range Note generation stops when the number of half steps between the
+    ///    highest and lowest note in the voices exceeds this value.
+    /// @return A Phrase with generated notes.
+    void compose(int tonic, int voices, int max_range, bool chromatic);
 
-    /// @return The number of notes in the phrase.
-    std::size_t size() const;
+    /// A fitness function determines points of interest in the Phrase.  Sections that start
+    /// at those points are extracted, spliced and returned.  The sections may overlap.
+    void edit();
+
+    /// Append notes to the end of the phrase.
+    void append_notes(const VNote& notes);
     /// Read-only note access.
     const VNote& notes() const;
-    /// @return The time at the end of the phrase.
-    double end_time() const;
-    /// @return The tempo in beat/min.
-    double tempo() const;
+
     /// Write the phrase to a file in MIDI format.
     std::ostream& write_midi(std::ostream& os, bool monophonic);
 
 private:
     double m_tempo; // beat/min
     VNote m_notes;
-    double m_end_time = 0.0;
+    std::string m_log;
+    int m_generation = 0;
 };
 
 #endif // COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED

@@ -1,5 +1,4 @@
 libcomposure_sources = [
-  'compose.cc',
   'midi.cc',
   'phrase.cc',
   'random.cc',
@@ -7,4 +6,4 @@ libcomposure_sources = [
 
 composure_lib = library('composure',
                         libcomposure_sources,
-                       override_options: ['cpp_std=c++2a'])
+                        override_options: ['cpp_std=c++2a'])
