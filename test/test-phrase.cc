@@ -1,4 +1,5 @@
-#include "compose.hh"
+#include <phrase.hh>
+
 #include "doctest.h"
 
 bool operator== (const Note& n1, const Note& n2)

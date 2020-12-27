@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along with Composure.
 // If not, see <http://www.gnu.org/licenses/>.
 
-#include <compose.hh>
+#include <phrase.hh>
 #include <random.hh>
 
 #include <cassert>
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
         key = pick(54, 65);
     log << *key << '\n'
         << "monophonic: " << (monophonic ? "yes" : "no") << '\n'
-        << "monophonic: " << (chromatic  ? "yes" : "no") << '\n';
+        << "chromatic: " << (chromatic  ? "yes" : "no") << '\n';
 
     // Start with an empty phrase and iterate.
     Phrase phrase(tempo);
