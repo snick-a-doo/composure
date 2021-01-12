@@ -1,16 +1,19 @@
 # Composure
 A naive music composition algorithm
 
+Fork it on GitHub: https://github.com/snick-a-doo/composure
+
 # Usage
-    composure [[-o|--output=] Output file name (composure.midi)
-              [[-v|--voices=] Number of voices (6)
-              [[-p|--passes=] Number of compose/edit passes (10)
-              [[-r|--range=] Maximum range of notes (24)
-              [[-t|--tempo=] Beats per minute (60)
-              [[-k|--key=] 60 for middle C (-1 random)
-              [[-s|--seed=] Random seed (-1 random)
-              [[-m|--monophonic]
-              [[-c|--chromatic]
+    composure [options]
+        -o --output=    Output file name (composure.midi)
+        -v --voices=    Number of voices (6)
+        -p --passes=    Number of compose/edit passes (10)
+        -r --range=     Maximum range of notes (24)
+        -t --tempo=     Beats per minute (60)
+        -k --key=       60 for middle C (-1 random)
+        -s --seed=      Random seed (-1 random)
+        -m --monophonic (false)
+        -c --chromatic  (false)
 
 All parameters are optional.  Key is specified by MIDI note number.  A key of -1 gives a random key from F# below to F above middle C.  A seed of -1 means to seed the random number generator with std::random_device to get unpredictable output.  Example:
 

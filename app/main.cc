@@ -100,15 +100,15 @@ int main(int argc, char* argv[])
             break;
         default:
             std::cerr << "Usage: composure [options]\n"
-                      << "    -o --output=  Output file name (" << output << ")\n"
-                      << "    -v --voices=  Number of voices (" << voices << ")\n"
-                      << "    -p --passes=  Number of compose/edit passes (" << passes << ")\n"
-                      << "    -r --range=   Maximum range of notes (" << range << ")\n"
-                      << "    -t --tempo=   Beats per minute (" << tempo << ")\n"
-                      << "    -k --key=     60 for middle C (random 54 to 65)\n"
-                      << "    -s --seed=    Random seed (random)\n"
-                      << "    -m --monophonic\n"
-                      << "    -c --chromatic"
+                      << "    -o --output=    Output file name (" << output << ")\n"
+                      << "    -v --voices=    Number of voices (" << voices << ")\n"
+                      << "    -p --passes=    Number of compose/edit passes (" << passes << ")\n"
+                      << "    -r --range=     Maximum range of notes (" << range << ")\n"
+                      << "    -t --tempo=     Beats per minute (" << tempo << ")\n"
+                      << "    -k --key=       60 for middle C (random 54 to 65)\n"
+                      << "    -s --seed=      Random seed (random)\n"
+                      << "    -m --monophonic (false)\n"
+                      << "    -c --chromatic  (false)"
                       << std::endl;
         }
     }

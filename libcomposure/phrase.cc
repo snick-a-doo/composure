@@ -230,7 +230,7 @@ void Phrase::edit()
     // Make a running consonance measure.
     Vd time, pitch, cons;
     std::deque<Note> notes;
-    const std::size_t bin = std::min(m_notes.size()/4, std::size_t(24)); //!! param
+    const std::size_t bin = std::min(m_notes.size()/4, std::size_t(36)); //!! param
     for (const auto& n : m_notes)
     {
         notes.push_back(n);
