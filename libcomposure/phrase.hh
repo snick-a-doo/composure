@@ -33,7 +33,6 @@ struct Note
 /// A sequence of notes, possibly overlapping in time.
 class Phrase
 {
-    using Vd = std::vector<double>;
     using VNote = std::vector<Note>;
 
 public:
@@ -63,10 +62,10 @@ public:
     std::ostream& write_midi(std::ostream& os, bool monophonic);
 
 private:
-    double m_tempo; // beat/min
-    VNote m_notes;
-    std::string m_log;
-    int m_generation = 0;
+    double m_tempo; ///< Tempo in beat/min.
+    VNote m_notes; ///< The notes in the composition so far.
+    std::string m_log; ///< Messages for the log file.
+    int m_generation = 0; ///< A count of the number of calls to compose()>
 };
 
 #endif // COMPOSURE_COMPOSURE_PHRASE_HH_INCLUDED

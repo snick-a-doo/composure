@@ -1,8 +1,6 @@
 # Composure
 A naive music composition algorithm
 
-Fork it on GitHub: https://github.com/snick-a-doo/composure
-
 # Usage
     composure [options]
         -o --output=    Output file name (composure.midi)
@@ -24,9 +22,9 @@ The monophonic options prevents overlapping notes, which is good for sustained p
 Otherwise, a decaying patch, like piano or marimba, is a good choice.  Notes are all in the key unless the chromatic option is given.
 
 # Algorithm
-Pieces are constructed by an iterated compose/edit pass.  In the "compose" part, notes are generated and appended to any existing notes.  Initially, all voices are set to tonic.  We loop over the voices and add notes one by one.  Each time through the loop, a  "dissonance" function is applied to each voice's note.  A voice is then chosen at random, weighted by dissonance.  The chosen voice's note is then changed randomly by -2, -1, 0, 1, or 2 scale degrees.  A second voice is chosen weighted by how long it's been since it changed.
+Pieces are constructed by repeated compose/edit passes.  In the "compose" part, notes are generated and appended to any existing notes.  Initially, all voices are set to tonic.  We loop over the voices and add notes one by one.  Each time through the loop, a  "dissonance" function is applied to each voice's note.  A voice is then chosen at random, weighted by dissonance.  The chosen voice's note is then changed randomly by -2, -1, 0, 1, or 2 scale degrees.  A second voice may be chosen for shifting up or down by one degree.  The probability of a voice being chosen is weighted by how long it's been since it changed.
 
-A duration of 1, 1/2, or 1/4 beat is assigned to each note.  The shorter durations are weighted more heavily when the range of notes in the voices is wide.  To make things more rhythmically interesting, each voice's note is shifted backward in time by n*d*(v+1)/v, where n is the index of the voice, d is the duration, v is the number of voices.  Notes heard near each other were generated in different loops over the voices.  Note generation stops when the range of notes exceeds a threshold (the *range* command line parameter).
+A duration of 1, 1/2, or 1/4 beat is assigned to each note.  The shorter durations are weighted more heavily when the range of notes in the voices is wide.  To make things  rhythmically interesting, each voice's note is shifted backward in time by n*d*(v+1)/v, where n is the index of the voice, d is the duration, v is the number of voices.  Notes heard near each other were generated in different loops over the voices.  Note generation stops when the range of notes exceeds a threshold (the *range* command line parameter).
 
 The "edit" part of the pass takes chunks of the notes generated so far and sticks them together.  The start of each chunk is determined by a "point of interest" function.  This function takes a running "consonance" measure and records where it goes from below its midpoint value to above.  This tends to provide some repetition with subtle variation and occasionally some more substantial changes.
 
@@ -44,5 +42,6 @@ It takes a minute to get rolling, and maybe it go on for too long between major 
 # Building
 
     mkdir build
+    cd build
     meson setup
-    meson compile -C build
+    meson compile

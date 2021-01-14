@@ -1,4 +1,4 @@
-// Copyright © 2020 Sam Varner
+// Copyright © 2020-2021 Sam Varner
 //
 // This file is part of Composure.
 //
@@ -36,7 +36,7 @@ std::string size_and_time(const std::vector<Note>& notes)
     return os.str();
 }
 
-/// Make a new composition and write it to out.midi.
+/// Make a new composition and write it to a MIDI file.
 int main(int argc, char* argv[])
 {
     std::string output = "composure.midi";
@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
             {"seed", required_argument, nullptr, 's'},
             {"monophonic", no_argument, nullptr, 'm'},
             {"chromatic", no_argument, nullptr, 'c'},
+            {"help", no_argument, nullptr, 'h'},
             {0, 0, 0, 0}};
         int index;
         int c = getopt_long(argc, argv, "o:v:p:r:t:k:s:mc", options, &index);
@@ -98,18 +99,24 @@ int main(int argc, char* argv[])
         case 'c':
             chromatic = true;
             break;
+        case 'h':
+            std::cerr << "Composure: Naive music composition\n"
+                      << "Version 1.0.0 © 2021 Sam Varner\n"
+                      << "https://github.com/snick-a-doo/composure\n";
         default:
-            std::cerr << "Usage: composure [options]\n"
+            std::cerr << "\nUsage: composure [options]\n"
+                      << "    -c --chromatic  (false)\n"
+                      << "    -h --help       Display this help and exit.\n"
+                      << "    -k --key=       60 for middle C (random 54 to 65)\n"
+                      << "    -m --monophonic (false)\n"
                       << "    -o --output=    Output file name (" << output << ")\n"
-                      << "    -v --voices=    Number of voices (" << voices << ")\n"
                       << "    -p --passes=    Number of compose/edit passes (" << passes << ")\n"
                       << "    -r --range=     Maximum range of notes (" << range << ")\n"
-                      << "    -t --tempo=     Beats per minute (" << tempo << ")\n"
-                      << "    -k --key=       60 for middle C (random 54 to 65)\n"
                       << "    -s --seed=      Random seed (random)\n"
-                      << "    -m --monophonic (false)\n"
-                      << "    -c --chromatic  (false)"
+                      << "    -t --tempo=     Beats per minute (" << tempo << ")\n"
+                      << "    -v --voices=    Number of voices (" << voices << ")\n"
                       << std::endl;
+            exit(c == 'h' ? 0 : 1);
         }
     }
 
@@ -152,10 +159,13 @@ int main(int argc, char* argv[])
     std::ofstream file(output);
     phrase.write_midi(file, monophonic);
 
+    // Write a text file with information about each note.
     std::ofstream note_log("composure.notes");
     for (const auto& note : phrase.notes())
         note_log << note.time << ' ' << note.time + note.duration << ' '
                  << note.pitch << ' ' << note.generation << std::endl;
 
+    // Print out the number of notes and total time.
+    std::cout << size_and_time(phrase.notes()) << std::endl;
     return 0;
 }

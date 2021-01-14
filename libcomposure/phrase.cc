@@ -31,6 +31,9 @@ using VNote = std::vector<Note>;
 
 namespace
 {
+    /// The number of notes to take from a point of interest in compose().
+    constexpr std::size_t note_bin_size = 36;
+
     /// Half steps from tonic for a major scale.
     const std::vector<double> major_scale = {0, 2, 4, 5, 7, 9, 11};
     const std::vector<double> chromatic_scale = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -137,6 +140,7 @@ namespace
     }
 }
 
+/// Compare notes by time.
 bool operator< (const Note& n1, const Note& n2)
 {
     return n1.time < n2.time;
@@ -207,6 +211,7 @@ void Phrase::edit()
     if (m_notes.empty())
         return;
 
+    // Return a vector of indices where consonance is greater than the midpoint and rising.
     auto points_of_interest = [](Vd& in) {
         std::vector<std::size_t> ps;
         auto [min, max] = std::minmax_element(in.begin(), in.end() - in.size()/2);
@@ -230,7 +235,7 @@ void Phrase::edit()
     // Make a running consonance measure.
     Vd time, pitch, cons;
     std::deque<Note> notes;
-    const std::size_t bin = std::min(m_notes.size()/4, std::size_t(36)); //!! param
+    const std::size_t bin = std::min(m_notes.size()/4, std::size_t(note_bin_size));
     for (const auto& n : m_notes)
     {
         notes.push_back(n);
@@ -247,6 +252,7 @@ void Phrase::edit()
     double end_time = 0.0;
     for (std::size_t ip = 0; ip < poi.size(); ++ip)
     {
+        // Store a set of notes starting at each point of interest.
         double dt = end_time - m_notes[poi[ip]].time;
         for (std::size_t jp = 0; jp < bin; ++jp)
         {
