@@ -37,7 +37,7 @@ The file composed.midi was produced by
 
     compose 8 15 24
 
-It takes a minute to get rolling, and maybe it go on for too long between major changes, but really enjoyed that one.  It sounds great on marimba.
+It takes a minute to get rolling, and maybe it goes on for too long between major changes, but really enjoyed that one.  It sounds great on marimba.
 
 # Building
 
