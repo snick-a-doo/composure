@@ -1,4 +1,4 @@
-// Copyright © 2020 Sam Varner
+// Copyright © 2020-2021 Sam Varner
 //
 // This file is part of Composure.
 //
@@ -15,6 +15,7 @@
 
 #include "midi.hh"
 
+#include <cassert>
 #include <cmath>
 #include <fstream>
 
@@ -65,6 +66,7 @@ std::size_t Midi_File::size() const
 
 void Midi_File::add_note(double time, bool on, double pitch, double velocity)
 {
+    assert(time >= 0.0);
     write_var_be(m_note_buffer, std::round(m_divisions*(time - m_last_time)));
     m_last_time = time;
 
@@ -98,9 +100,11 @@ void Midi_File::write_header(std::ostream& os) const
 void Midi_File::write_track(std::ostream& os, const char* buffer, std::uint32_t size) const
 {
     os.write("MTrk", 4);
-    write_be(os, size + 48);
+    write_be(os, size + 22); // Add bytes written before and after the buffer.
     write_be(os, std::uint32_t(0x00ff5103)); // Time and "set tempo" meta-event.
     write_be(os, Uint24(60e6/m_tempo)); // µs/quarter note
+    write_be(os, std::uint32_t(0x00ff5804)); // Time signature meta-event.
+    write_be(os, std::uint32_t(0x04021808)); // 4/4
     os.write(buffer, size);
 
     // End of track

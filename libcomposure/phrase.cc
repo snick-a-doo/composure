@@ -1,4 +1,4 @@
-// Copyright © 2020 Sam Varner
+// Copyright © 2020-2021 Sam Varner
 //
 // This file is part of Composure.
 //
@@ -47,8 +47,8 @@ namespace
 
     /// @param key A MIDI note number of the tonic of the key.
     /// @param pitch A MIDI note number of a note.
-    /// @return The degree of the scale (0-6) of pitch in key, or no value if pitch is not in
-    /// the key.
+    /// @return The degree of the scale (0-6) of pitch in key, or no value if pitch is not
+    /// in the key.
     std::optional<int> degree(const auto& scale, double key, double pitch)
     {
         while (pitch < key)
@@ -294,7 +294,7 @@ std::ostream& Phrase::write_midi(std::ostream& os, bool monophonic)
     {
         const auto& note = waiting.extract(waiting.begin()).value();
         bool on = note.duration != 0.0;
-       if (monophonic && on && note.time == last_time)
+       if (note.time < 0.0 || (monophonic && on && note.time == last_time))
             continue;
         midi.add_note(note.time, on, note.pitch, note.volume);
         if (on)

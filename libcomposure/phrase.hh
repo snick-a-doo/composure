@@ -27,7 +27,7 @@ struct Note
     double duration; ///< beats
     double volume; ///< 0 to 1
     double pitch;  ///< MIDI note: 60 + (half steps from middle C).
-    int generation;
+    int generation; ///< Incremented for each "compose" pass.
 };
 
 /// A sequence of notes, possibly overlapping in time.
