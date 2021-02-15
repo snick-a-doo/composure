@@ -39,13 +39,13 @@ std::string size_and_time(const std::vector<Note>& notes)
 /// Make a new composition and write it to a MIDI file.
 int main(int argc, char* argv[])
 {
-    std::string output = "composure.midi";
+    std::string output = "composure";
     int voices = 6;
     int passes = 8;
     int range = 24;
     int tempo = 60;
     std::optional<int> key;
-    std::optional<int> seed;
+    std::optional<unsigned int> seed;
     bool monophonic = false;
     bool chromatic = false;
 
@@ -76,22 +76,22 @@ int main(int argc, char* argv[])
             output = optarg;
             break;
         case 'v':
-            voices = std::atoi(optarg);
+            voices = std::stoi(optarg);
             break;
         case 'p':
-            passes = std::atoi(optarg);
+            passes = std::stoi(optarg);
             break;
         case 'r':
-            range = std::atoi(optarg);
+            range = std::stoi(optarg);
             break;
         case 't':
-            tempo = std::atoi(optarg);
+            tempo = std::stoi(optarg);
             break;
         case 'k':
-            key = std::atoi(optarg);
+            key = std::stoi(optarg);
             break;
         case 's':
-            seed = std::atoi(optarg);
+            seed = std::stoul(optarg);
             break;
         case 'm':
             monophonic = true;
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    std::ofstream log("composure.log");
+    std::ofstream log(output + ".log");
     for (int i = 0; i < argc; ++i)
         log << argv[i] << ' ';
     log << '\n';
@@ -156,11 +156,11 @@ int main(int argc, char* argv[])
         log << "  edit   : " << size_and_time(phrase.notes()) << '\n';
     }
 
-    std::ofstream file(output);
+    std::ofstream file(output + ".midi");
     phrase.write_midi(file, monophonic);
 
     // Write a text file with information about each note.
-    std::ofstream note_log("composure.notes");
+    std::ofstream note_log(output + ".notes");
     for (const auto& note : phrase.notes())
         note_log << note.time << ' ' << note.time + note.duration << ' '
                  << note.pitch << ' ' << note.generation << std::endl;

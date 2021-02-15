@@ -30,7 +30,7 @@ public:
     {}
 };
 
-void set_random_seed(int s)
+void set_random_seed(unsigned int s)
 {
     random_generator.seed(s);
 }

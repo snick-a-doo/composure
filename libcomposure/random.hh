@@ -20,7 +20,7 @@
 #include <vector>
 
 /// Set a seed for reproducible output.
-void set_random_seed(int s);
+void set_random_seed(unsigned int s);
 
 /// @return A random integer from low to high, inclusive, with linear weighting.
 int pick(int low, int high, int low_weight = 1, int high_weight = 1);

@@ -28,7 +28,7 @@ bool close(const double& actual, const double& expected, double tol)
 
 TEST_CASE("empty weights")
 {
-    set_random_seed(0);
+    set_random_seed(0u);
     CHECK_THROWS(pick({}));
     CHECK_THROWS(pick({0}));
     CHECK_THROWS(pick({-9}));
@@ -41,7 +41,7 @@ TEST_CASE("empty weights")
 
 TEST_CASE("pick weights")
 {
-    set_random_seed(0);
+    set_random_seed(0u);
     std::vector<double> weights({1.0, 3.0, 0.0, 6.0});
     std::vector<int> picks(weights.size());
     constexpr int N = 1000;
@@ -56,7 +56,7 @@ TEST_CASE("pick weights")
 
 TEST_CASE("pick range")
 {
-    set_random_seed(0);
+    set_random_seed(0u);
     std::vector<int> picks(4);
     constexpr int N = 1000;
     for (int i = 0; i < N; ++i)
@@ -67,7 +67,7 @@ TEST_CASE("pick range")
 
 TEST_CASE("pick negative range")
 {
-    set_random_seed(0);
+    set_random_seed(0u);
     std::vector<int> picks(5);
     constexpr int N = 1000;
     for (int i = 0; i < N; ++i)
