@@ -6,5 +6,4 @@ libcomposure_sources = [
 
 composure_lib = library('composure',
                         libcomposure_sources,
-                        override_options: ['cpp_std=c++2a'],
                         install: true)

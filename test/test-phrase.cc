@@ -28,8 +28,8 @@ bool operator== (const Note& n1, const Note& n2)
 TEST_CASE("notes")
 {
     Phrase phrase(60);
-    Note n1(1.2, 2.3, 0.8, 33);
-    Note n2(4.5, 6.7, 0.2, 44);
+    Note n1(1.2, 2.3, 0.8, 33, 0);
+    Note n2(4.5, 6.7, 0.2, 44, 1);
     SUBCASE("empty")
     {
         CHECK(phrase.notes().empty());

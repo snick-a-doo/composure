@@ -44,4 +44,4 @@ It takes a minute to get rolling, and maybe it goes on for too long between majo
     mkdir build
     cd build
     meson setup
-    meson compile
+    ninja (or build with another back-end)

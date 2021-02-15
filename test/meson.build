@@ -9,7 +9,6 @@ inc = include_directories('.', '../libcomposure')
 
 test_app = executable('test_app',
                       test_sources,
-                      override_options: ['cpp_std=c++2a'],
                       include_directories: inc,
                       link_with: composure_lib)
 
