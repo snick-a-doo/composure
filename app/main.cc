@@ -26,9 +26,13 @@
 #include <optional>
 #include <random>
 
-std::string size_and_time(const std::vector<Note>& notes)
+static std::string version = "1.1.0";
+
+std::string size_and_time(const std::vector<Note>& notes, int tempo)
 {
-    auto sec = static_cast<int>(notes.back().time + notes.back().duration);
+    // Convert note times from beats to seconds.
+    auto sec = notes.empty()
+        ? 0 : static_cast<int>(60.0/tempo * (notes.back().time + notes.back().duration));
     std::ostringstream os;
     os << std::setw(4) << notes.size() << " notes "
        << std::setw(2) << sec/60 << ':'
@@ -101,8 +105,9 @@ int main(int argc, char* argv[])
             break;
         case 'h':
             std::cerr << "Composure: Naive music composition\n"
-                      << "Version 1.0.0 © 2021 Sam Varner\n"
+                      << "Version " << version << " © 2021 Sam Varner\n"
                       << "https://github.com/snick-a-doo/composure\n";
+            // Fall through
         default:
             std::cerr << "\nUsage: composure [options]\n"
                       << "    -c --chromatic  (false)\n"
@@ -124,9 +129,10 @@ int main(int argc, char* argv[])
     for (int i = 0; i < argc; ++i)
         log << argv[i] << ' ';
     log << '\n';
-    log << "voices: " << voices << '\n'
+    log << "version: " << version << '\n'
+        << "voices: " << voices << '\n'
         << "passes: " << passes << '\n'
-        << "ragne: "  << range << '\n'
+        << "range: "  << range << '\n'
         << "tempo: "  << tempo << '\n';
 
     log << "seed " << (seed ? "" : "(random)") << ": ";
@@ -151,9 +157,9 @@ int main(int argc, char* argv[])
     {
         log << "pass " << i + 1 << '/' << passes << '\n';
         phrase.compose(*key, voices, range, chromatic);
-        log << "  compose: " << size_and_time(phrase.notes()) << '\n';
+        log << "  compose: " << size_and_time(phrase.notes(), tempo) << '\n';
         phrase.edit();
-        log << "  edit   : " << size_and_time(phrase.notes()) << '\n';
+        log << "  edit   : " << size_and_time(phrase.notes(), tempo) << '\n';
     }
 
     std::ofstream file(output + ".midi");
@@ -166,6 +172,6 @@ int main(int argc, char* argv[])
                  << note.pitch << ' ' << note.generation << std::endl;
 
     // Print out the number of notes and total time.
-    std::cout << size_and_time(phrase.notes()) << std::endl;
+    std::cout << size_and_time(phrase.notes(), tempo) << std::endl;
     return 0;
 }

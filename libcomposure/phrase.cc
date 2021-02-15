@@ -171,9 +171,9 @@ void Phrase::compose(int tonic, int voices, int max_range, bool chromatic)
     for (double span = 0.0; span < max_range && m_notes.size() < 1000; span = range(pitch))
     {
         // Move the "most discordant" note by -2, -1, 0, 1, or 2 scale degrees.
-        std::vector<double> discord(pitch.size());
-        std::transform(pitch.begin(), pitch.end(), discord.begin(),
-                       [&pitch](auto x) { return weight_discord(pitch, x); });
+        std::vector<double> discord;
+        for (std::size_t i = 0; i < pitch.size(); ++i)
+            discord.push_back(weight_discord(pitch, i));
         auto move_idx = pick(discord);
         pitch[move_idx] = scale_pitch(chromatic ? chromatic_scale : major_scale,
                                       tonic, pitch[move_idx],
@@ -188,7 +188,7 @@ void Phrase::compose(int tonic, int voices, int max_range, bool chromatic)
         // Pick a random duration for the note: 1/4, 1/8, 1/16.  Favor shorter notes when
         // the pitch range is large.
         double dur = subdivide(4.0, pick(0, 2, max_range - span, span));
-        auto delta_t = dur*(voices+1)/voices;
+        double delta_t = dur*(voices+1)/4;
         if (end_time > pitch.size()*delta_t)
             for (std::size_t j = 0; j < pitch.size(); j++)
                 m_notes.emplace_back(end_time - j*delta_t, dur, 0.8, pitch[j], m_generation);
@@ -211,7 +211,7 @@ void Phrase::edit()
     if (m_notes.empty())
         return;
 
-    // Return a vector of indices where consonance is greater than the midpoint and rising.
+    // Return a vector of indices where consonance peaks after crossing the midpoint.
     auto points_of_interest = [](Vd& in) {
         std::vector<std::size_t> ps;
         auto [min, max] = std::minmax_element(in.begin(), in.end() - in.size()/2);
@@ -223,9 +223,9 @@ void Phrase::edit()
         {
             if (in[i] < thresh)
                 over = false;
-            else if (!over && in[i] < in[i-1])
+            else if (!over && in[i-1] > in[i])
             {
-                ps.push_back(i);
+                ps.push_back(i-1);
                 over = true;
             }
         }

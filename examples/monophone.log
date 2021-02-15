@@ -1,0 +1,33 @@
+./composure -v4 -m -t 90 -s 3502062429 -o monophone 
+voices: 4
+passes: 8
+range: 24
+tempo: 90
+seed : 3502062429
+key (random): 57
+monophonic: yes
+chromatic: no
+pass 1/8
+  compose:  260 notes  1:58
+  edit   :  144 notes  1:02
+pass 2/8
+  compose:  592 notes  3:34
+  edit   :  468 notes  3:03
+pass 3/8
+  compose:  672 notes  3:59
+  edit   :  504 notes  3:14
+pass 4/8
+  compose:  568 notes  3:42
+  edit   :  684 notes  4:19
+pass 5/8
+  compose:  728 notes  4:35
+  edit   :  360 notes  2:12
+pass 6/8
+  compose:  768 notes  4:13
+  edit   :  612 notes  3:20
+pass 7/8
+  compose: 1000 notes  5:40
+  edit   :  720 notes  3:44
+pass 8/8
+  compose:  732 notes  3:50
+  edit   :  792 notes  4:03

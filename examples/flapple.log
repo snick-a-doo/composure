@@ -1,0 +1,33 @@
+./composure -t 70 -s 2564151080 -o flapple 
+voices: 6
+passes: 8
+range: 24
+tempo: 70
+seed : 2564151080
+key (random): 58
+monophonic: no
+chromatic: no
+pass 1/8
+  compose:  732 notes  3:36
+  edit   :  648 notes  3:01
+pass 2/8
+  compose:  666 notes  3:04
+  edit   :  504 notes  2:20
+pass 3/8
+  compose:  678 notes  3:05
+  edit   :  684 notes  3:07
+pass 4/8
+  compose: 1002 notes  4:50
+  edit   :  576 notes  2:41
+pass 5/8
+  compose: 1002 notes  4:48
+  edit   :  576 notes  2:31
+pass 6/8
+  compose: 1002 notes  5:05
+  edit   :  756 notes  3:08
+pass 7/8
+  compose: 1002 notes  4:13
+  edit   : 1008 notes  3:56
+pass 8/8
+  compose: 1008 notes  3:56
+  edit   : 1080 notes  4:13
