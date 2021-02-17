@@ -28,7 +28,7 @@ where <filename> is the name passed to the -o or --output= option, or the defaul
 
 The log file shows the parameters used used to generate the output, including the seed. This allows the output to be recreated from the log. The .notes file contains space-separated data for each note: start time, stop time, pitch, and generation, i.e. which pass the note was generated on. The file scripts/plot-notes.r contains the function plot.notes written in the language [R](https://www.r-project.org/) that produces something like
 
-![Example output of the plot.notes function](example/flapple.png)
+![Example output of the plot.notes function](examples/flapple.png)
 
 The color shows the generation.
 
@@ -46,12 +46,12 @@ When the compose/edit sequence is iterated, "compose" takes the last note for ea
 
 There's very little music theory or traditional rules of composition baked in. Sometimes the output is tedious, but often it makes me happy. And if one composition doesn't hit the spot, you can always generate another.
 
-# Example
-The file example/flapple.midi is produced by
+# Examples
+The file examples/flapple.midi is produced by
 
     composure -t 70 -s 2564151080 -o flapple
 
-Too tonal? Try example/spilt.midi. For solo violin, try example/monophone.midi.
+Too tonal? Try examples/spilt.midi. For solo violin, try examples/monophone.midi.
 
 # Building
 
