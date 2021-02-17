@@ -1,0 +1,34 @@
+composure -t 90 -s 1081882562 -c -o spilt 
+version: 1.1.0
+voices: 6
+passes: 8
+range: 24
+tempo: 90
+seed : 1081882562
+key (random): 60
+monophonic: no
+chromatic: yes
+pass 1/8
+  compose:  954 notes  3:58
+  edit   :  648 notes  2:42
+pass 2/8
+  compose:  996 notes  3:55
+  edit   :  540 notes  1:55
+pass 3/8
+  compose:  624 notes  2:16
+  edit   :  720 notes  2:30
+pass 4/8
+  compose:  726 notes  2:33
+  edit   :  792 notes  2:48
+pass 5/8
+  compose: 1002 notes  3:30
+  edit   : 1008 notes  3:32
+pass 6/8
+  compose: 1008 notes  3:32
+  edit   : 1368 notes  4:48
+pass 7/8
+  compose: 1368 notes  4:48
+  edit   : 1548 notes  5:16
+pass 8/8
+  compose: 1548 notes  5:16
+  edit   : 1296 notes  4:15
