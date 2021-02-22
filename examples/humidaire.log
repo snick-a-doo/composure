@@ -1,0 +1,34 @@
+composure -t70 
+version: 1.1.0
+voices: 6
+passes: 8
+range: 24
+tempo: 70
+seed (random): 500855435
+key (random): 55
+monophonic: no
+chromatic: no
+pass 1/8
+  compose:  408 notes  2:30
+  edit   :  216 notes  1:18
+pass 2/8
+  compose:  810 notes  4:11
+  edit   :  612 notes  3:06
+pass 3/8
+  compose:  708 notes  3:27
+  edit   :  540 notes  2:45
+pass 4/8
+  compose:  912 notes  4:27
+  edit   :  540 notes  2:38
+pass 5/8
+  compose:  786 notes  3:54
+  edit   :  684 notes  3:34
+pass 6/8
+  compose:  690 notes  3:38
+  edit   :  612 notes  3:05
+pass 7/8
+  compose:  618 notes  3:06
+  edit   :  648 notes  3:06
+pass 8/8
+  compose: 1002 notes  4:59
+  edit   :  648 notes  3:29
