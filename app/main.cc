@@ -29,7 +29,7 @@
 #include <random>
 #include <regex>
 
-static std::string version = "1.1.0";
+static std::string version = "1.1.1";
 
 double beat_to_sec(double beats, double tempo)
 {
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
                       << "https://github.com/snick-a-doo/composure\n";
             // Fall through
         default:
-            std::cerr << "\nUsage: composure [options]\n"
+            std::cerr << "\nUsage: composure [log] [options]\n"
                       << "    -c --chromatic  (false)\n"
                       << "    -h --help       Display this help and exit.\n"
                       << "    -k --key=       60 for middle C (random 54 to 65)\n"
@@ -192,6 +192,9 @@ int main(int argc, char* argv[])
                       << "    -s --seed=      Random seed (random)\n"
                       << "    -t --tempo=     Beats per minute (" << opt.tempo << ")\n"
                       << "    -v --voices=    Number of voices (" << opt.voices << ")\n"
+                      << "\n"
+                      << "If a log file is passed, its settings are used unless overridden\n"
+                      << "by command-line options.\n"
                       << std::endl;
             exit(c == 'h' ? 0 : 1);
         }

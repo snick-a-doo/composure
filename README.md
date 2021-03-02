@@ -2,7 +2,7 @@
 A naive music composition algorithm
 
 # Usage
-    composure [options]
+    composure [log] [options]
         -c --chromatic  (false)
         -h --help       Display this help and exit.
         -k --key=       60 for middle C (random 54 to 65)
@@ -14,7 +14,7 @@ A naive music composition algorithm
         -t --tempo=     Beats per minute (60)
         -v --voices=    Number of voices (6)
 
-All parameters are optional. Defaults are in parnetheses. Key is specified by MIDI note number. If unspecified, a random key is chosen from F# below to F above middle C. If a seed is not specified, the random number generator is seeded with std::random_device to give unpredictable output.
+All parameters are optional. Defaults are in parentheses. If a log file is passed, its settings are defaults which may be overridden by command-line options. Key is specified by MIDI note number. If unspecified, a random key is chosen from F# below to F above middle C. If a seed is not specified, the random number generator is seeded with std::random_device to give unpredictable output.
 
 Three output files are produced:
 * <filename>.midi
@@ -25,6 +25,11 @@ where <filename> is the name passed to the -o or --output= option, or the defaul
 
     composure -v12 -t120
     timidity composure.midi --force-program=12
+
+To repeat a composition with some parameters varied, pass the log file as an argument and override the parameters with options. For example, to repeat a composition at a quicker tempo:
+
+    composure
+    composure composure.log -t80
 
 The log file shows the parameters used used to generate the output, including the seed. This allows the output to be recreated from the log. The .notes file contains space-separated data for each note: start time, stop time, pitch, and generation, i.e. which pass the note was generated on. The file scripts/plot-notes.r contains the function plot.notes written in the language [R](https://www.r-project.org/) that produces something like
 
